@@ -5,4 +5,5 @@ urlpatterns = [
     path('<str:page>/', views.recipes, name='recipes'),
     path('ajouter-recette/', views.ajouter_recette, name='ajouter_recette'),
     path('', views.accueil, name='accueil_recipes'),
+    path('detail/<int:pk>/', views.recette_detail, name='recette_detail'),
 ]

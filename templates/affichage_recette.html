@@ -1,0 +1,9 @@
+
+
+<h1>{{ recipe.title }}</h1>
+<div class="ingredients">
+  {{ recipe.ingredients|linebreaks }}
+</div>
+<div class="instructions">
+  {{ recipe.instructions|safe }}  {# instructions contiennent du HTML produit par CKEditor #}
+</div>

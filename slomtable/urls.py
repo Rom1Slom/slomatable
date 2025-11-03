@@ -17,11 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from recipes import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('recipes/', include('recipes.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),  # upload CKEditor
+         
     path('', views.accueil, name='accueil_recipes'),
-    path('ajouter_recette/', views.ajouter_recette, name='ajouter_recette'),
+    
 ]
 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,19 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Ajouter une recette{% endblock %}
 
+{% block head %}
+    {{ form.media }}  {# nécessaire pour charger les scripts CSS/JS de CKEditor #}
+{% endblock %}
 
     {% block content %}
-    <title>Ajouter une recette</title>
-</head>
-<body>
-    <h1>Ajouter une recette</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Enregistrer</button>
-    </form>
-    <p><a href="{% url 'recipes' 'accueil' %}">⬅ Retour à l'accueil</a></p>
-</body>
-
-    {% endblock %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer</button>
+</form>
+{% endblock %}
 
