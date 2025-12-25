@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Détail de la recette{% endblock %}
+{% block content %}
+<h1>{{ recipe.title }}</h1>
+<p><strong>Catégorie :</strong> {{ recipe.get_category_display }}</p>
+<p><strong>Ingrédients :</strong><br>{{ recipe.ingredients|linebreaks }}</p>
+<p><strong>Instructions :</strong><br>{{ recipe.instructions|safe }}</p>
+{% if user.is_authenticated and recipe.author == user %}
+    <a href="{% url 'recipes:modifier_recette' recipe.pk %}" class="btn btn-warning">Modifier</a>
+{% endif %}
+{% endblock %}

@@ -2,20 +2,12 @@
 {% extends "base.html" %}
 {% block title %}Accueil{% endblock %}
 
-
-
-<head>
-    <title>Accueil</title>
-</head>
-<body>
-
-    {% block content %}
+{% block content %}
     <h1>Bienvenue {{ nom }} !</h1>
     <ul>
-    <li><a href="{% url 'recipes' 'entrees' %}">Entrées</a></li>
-    <li><a href="{% url 'recipes' 'pprincipaux' %}">Plats principaux</a></li>
-    <li><a href="{% url 'recipes' 'desserts' %}">Desserts</a></li>
-    <li><a href="{% url 'ajouter_recette' %}">➕ Ajouter une recette</a></li>
+    <li><a href="{% url 'recipes:recipes' 'entrees' %}">Entrées</a></li>
+    <li><a href="{% url 'recipes:recipes' 'plats_principaux' %}">Plats principaux</a></li>
+    <li><a href="{% url 'recipes:recipes' 'desserts' %}">Desserts</a></li>
+    <li><a href="{% url 'recipes:ajouter_recette' %}">➕ Ajouter une recette</a></li>
 </ul>
-    {% endblock %}
-</body>
+{% endblock %}

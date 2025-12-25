@@ -5,11 +5,87 @@
     {{ form.media }}  {# nécessaire pour charger les scripts CSS/JS de CKEditor #}
 {% endblock %}
 
-    {% block content %}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Enregistrer</button>
-</form>
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <p>{{ form.title.label_tag }} {{ form.title }}</p>
+      <p>{{ form.category.label_tag }} {{ form.category }}</p>
+      <p>{{ form.ingredients.label_tag }} {{ form.ingredients }}</p>
+      <p>{{ form.instructions.label_tag }} {{ form.instructions }}</p>
+
+      <button type="submit">Enregistrer</button>
+    </form>
+  </div>
+
+  <div class="col-md-4">
+    <h5>Galerie des photos uploadées</h5>
+    <input type="file" id="upload_input" accept="image/*" multiple>
+    <div id="gallery" aria-live="polite"></div>
+  </div>
+</div>
+
+
+<!-- script pour gérer l'upload asynchrone. il envoie le fichier au serveur en POST multipart/form-data et inclut le
+ token CSRF dans l'en-tête et ajoute la vignette reçue à la galerie latérale -->
+<script>
+function getCookie(name){ /* récupère cookie CSRF */ 
+  const v=document.cookie.match('(^|;)\\s*'+name+'\\s*=\\s*([^;]+)'); return v? v.pop(): '';
+}
+document.getElementById('upload_input').addEventListener('change', async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const fd = new FormData(); fd.append('photo', file);
+  //avec fetch API, envoi asynchrone (envoi du fichier au serveur)
+  const res = await fetch('{% url "recipes:upload_photo" %}' || '/recipes/upload-photo/', {
+    method: 'POST',
+    headers: {'X-CSRFToken': getCookie('csrftoken')},
+    body: fd
+  });
+  const json = await res.json();
+  if(res.ok){
+    // afficher vignette dans la galerie sans recharger la page
+    const img = document.createElement('img');
+    img.src = json.url;
+    img.dataset.photoId = json.id;
+    img.style.maxWidth = '120px';
+    img.draggable = true;
+    document.getElementById('gallery').appendChild(img);
+    // ajouter handlers drag&drop pour l'éditeur ici
+  } else {
+    alert(json.error || 'Échec upload');
+  }
+});
+// Drag & drop image depuis la galerie vers CKEditor (champ instructions)
+document.addEventListener('DOMContentLoaded', function() {
+    // Lors du dragstart sur une image de la galerie, on met son URL dans le dataTransfer
+    document.getElementById('gallery').addEventListener('dragstart', function(e) {
+        if (e.target.tagName === 'IMG') {
+            e.dataTransfer.setData('text/plain', e.target.src);
+        }
+    });
+
+    // Attendre que CKEditor soit prêt. ContentDom est l'événement indiquant que le DOM interne de l'éditeur est prêt
+    if (window.CKEDITOR && CKEDITOR.instances['id_instructions']) {
+        var editor = CKEDITOR.instances['id_instructions'];
+        editor.on('contentDom', function() {
+          // Gérer l'événement drop dans l'éditeur
+            editor.document.on('drop', function(evt) {
+                var dataTransfer = evt.data.$.dataTransfer;
+                if (dataTransfer && dataTransfer.getData('text/plain')) {
+                    var imageUrl = dataTransfer.getData('text/plain');
+                    // Insère une balise <img> à l'endroit du curseur
+                    editor.insertHtml('<img src="' + imageUrl + '" alt="Image" style="max-width:200px; max-height:150px;">');
+                    evt.data.preventDefault();
+                }
+            });
+        });
+    }
+});
+</script>
+
 {% endblock %}
+
 

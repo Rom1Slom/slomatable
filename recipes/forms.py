@@ -1,12 +1,12 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Recipe
+from .models import Recipe, Photo
 import re
 
 class RecipeForm(forms.ModelForm):
     class Meta:
         model = Recipe
-        fields = ['title', 'ingredients', 'instructions']
+        fields = ['title', 'category', 'ingredients', 'instructions']
         widgets = {
             'ingredients': forms.Textarea(attrs={'rows': 6}),
             'instructions': forms.Textarea(attrs={'rows': 10}),
@@ -20,3 +20,8 @@ class RecipeForm(forms.ModelForm):
             raise ValidationError("Maximum 5 images autorisées dans les instructions (actuellement : %d)." % img_count)
         return value
         
+# Formulaire pour uploader une photo liée à une recette        
+class PhotoForm(forms.ModelForm):
+    class Meta:
+        model = Photo
+        fields = ['image', 'caption']

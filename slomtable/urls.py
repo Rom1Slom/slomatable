@@ -22,13 +22,16 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),  # Authentification
     path('recipes/', include('recipes.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),  # upload CKEditor
          
     path('', views.accueil, name='accueil_recipes'),
+    path('modifier_recette/<int:pk>/', views.modifier_recette, name='modifier_recette'),
     
 ]
 
+# En mode développement, servir les fichiers médias via Django
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
